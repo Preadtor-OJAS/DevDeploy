@@ -44,7 +44,7 @@ export default function DeployPage() {
         userId: user.id
       });
       // Redirect back to dashboard upon success
-      router.push('/');
+      router.push('/dashboard');
     } catch (err) {
       setError(err.message || 'Failed to create application');
       setIsSubmitting(false);
