@@ -1,0 +1,10 @@
+{
+  "experimentalServices": {
+    "frontend": {
+      "src": "frontend"
+    },
+    "backend": {
+      "src": "backend"
+    }
+  }
+}
