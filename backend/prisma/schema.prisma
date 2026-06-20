@@ -1,0 +1,65 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String        @id @default(uuid())
+  email        String        @unique
+  password     String
+  name         String?
+  applications Application[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+}
+
+model Application {
+  id            String       @id @default(uuid())
+  name          String       @unique
+  repositoryUrl String
+  branch        String       @default("main")
+  language      String?      // nodejs, python, java
+  status        AppStatus    @default(STOPPED)
+  userId        String
+  user          User         @relation(fields: [userId], references: [id])
+  deployments   Deployment[]
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+}
+
+model Deployment {
+  id            String           @id @default(uuid())
+  applicationId String
+  application   Application      @relation(fields: [applicationId], references: [id])
+  status        DeploymentStatus @default(PENDING)
+  logs          Log[]
+  commitHash    String?
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+}
+
+model Log {
+  id           String     @id @default(uuid())
+  deploymentId String
+  deployment   Deployment @relation(fields: [deploymentId], references: [id])
+  message      String
+  timestamp    DateTime   @default(now())
+}
+
+enum AppStatus {
+  RUNNING
+  STOPPED
+  FAILED
+}
+
+enum DeploymentStatus {
+  PENDING
+  BUILDING
+  DEPLOYING
+  SUCCESS
+  FAILED
+}
